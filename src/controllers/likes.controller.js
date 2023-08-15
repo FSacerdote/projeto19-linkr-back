@@ -4,7 +4,7 @@ import {
   selectCountLikes,
   selectLikes,
   selectUsersFromLiked,
-} from "../repository/likes.repository";
+} from "../repositories/likes.repository";
 
 export async function likePost(req, res) {
   const { postId } = req.params;
