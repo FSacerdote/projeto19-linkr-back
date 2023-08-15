@@ -1,7 +1,9 @@
 import {
   deleteLike,
   insertIntoLike,
+  selectCountLikes,
   selectLikes,
+  selectUsersFromLiked,
 } from "../repository/likes.repository";
 
 export async function likePost(req, res) {
@@ -42,7 +44,18 @@ export async function dislikePost(req, res) {
 export async function getLikes(req, res) {
   const { postId } = req.params;
   try {
-    res.status(200).send("Enviar número de likes");
+    const likesQuery = await selectCountLikes(postId);
+    const likedUsersQuery = await selectUsersFromLiked(postId);
+
+    const likeCount = likesQuery.rows[0].likeCount;
+    const likedUsers = likedUsersQuery.rows.map((row) => row.userId);
+
+    const likesFromPost = {
+      likeCount,
+      likedUsers,
+    };
+
+    res.status(200).send(likesFromPost);
   } catch (err) {
     res.status(500).send(err.message);
   }

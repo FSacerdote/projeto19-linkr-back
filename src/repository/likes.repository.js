@@ -28,6 +28,6 @@ export function selectCountLikes(postId) {
   );
 }
 
-export function selectUserFromLikes(postId) {
-  db.query(`SELECT "userId" FROM likes WHERE "postId" = $1`, [postId]);
+export function selectUsersFromLiked(postId) {
+  return db.query(`SELECT "userId" FROM likes WHERE "postId" = $1`, [postId]);
 }
