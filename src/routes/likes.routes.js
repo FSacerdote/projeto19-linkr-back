@@ -4,15 +4,13 @@ import {
   getLikes,
   likePost,
 } from "../controllers/likes.controller";
+import { validateAuth } from "../middlewares/validateAuth";
 
 const likesRouter = Router();
 
-/* TO-DO 
-    - adicionar validação nos endpoints
-*/
 
-likesRouter.post("/like/:postId", likePost);
-likesRouter.delete("/like/:postId", dislikePost);
-likesRouter.get("/post/:postId/likes", getLikes);
+likesRouter.post("/like/:postId", validateAuth, likePost);
+likesRouter.delete("/like/:postId", validateAuth, dislikePost);
+likesRouter.get("/post/:postId/likes", validateAuth, getLikes);
 
 export default likesRouter;
