@@ -33,16 +33,16 @@ export async function signin(req, res) {
     if (bcrypt.compareSync(password, foundUser.rows[0].password)) {
       const token = jwt.sign(
         {
-          email,
-          utcOffset: foundUser.rows[0].utcOffset,
-          id: foundUser.rows[0].id,
+          id: foundUser.rows[0].id
         },
         process.env.JWT_SECRET,
         {
           expiresIn: tokenExpirationSeconds,
         }
       );
-      return res.status(200).send({ name: foundUser.rows[0].username, token });
+      return res
+        .status(200)
+        .send({ pictureUrl: foundUser.rows[0].pictureUrl, token });
     }
     return res.sendStatus(401);
   } catch (error) {
