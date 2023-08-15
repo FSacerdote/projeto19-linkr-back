@@ -3,11 +3,10 @@ import {
   dislikePost,
   getLikes,
   likePost,
-} from "../controllers/likes.controller";
-import { validateAuth } from "../middlewares/validateAuth";
+} from "../controllers/likes.controller.js";
+import { validateAuth } from "../middlewares/validateAuth.js";
 
 const likesRouter = Router();
-
 
 likesRouter.post("/like/:postId", validateAuth, likePost);
 likesRouter.delete("/like/:postId", validateAuth, dislikePost);
