@@ -33,7 +33,7 @@ export async function signin(req, res) {
     if (bcrypt.compareSync(password, foundUser.rows[0].password)) {
       const token = jwt.sign(
         {
-          id: foundUser.rows[0].id
+          id: foundUser.rows[0].id,
         },
         process.env.JWT_SECRET,
         {
