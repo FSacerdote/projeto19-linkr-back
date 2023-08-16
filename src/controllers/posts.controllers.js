@@ -1,3 +1,4 @@
+import getMetaData from "metadata-scraper";
 import { db } from "../database/database.connection.js";
 import { getPostsQuery, insertPost } from "../repositories/posts.repository.js";
 
@@ -37,7 +38,12 @@ export async function getPosts(req, res) {
   try {
     const resposta = await getPostsQuery();
     const posts = resposta.rows;
-    res.send(posts);
+    const final = [];
+    for (const post of posts) {
+      const data = await getMetaData(post.url);
+      final.push({ ...post, data });
+    }
+    res.send(final);
   } catch (error) {
     res.status(500).send("An error occurred while getting the posts");
   }
