@@ -15,3 +15,20 @@ export function getPostsQuery() {
     ORDER BY p.id LIMIT 20;`
   );
 }
+
+export function getHashtag(hashtag) {
+  return db.query(`SELECT * FROM hashtags WHERE name=$1;`, [hashtag]);
+}
+
+export function insertHashtag(hashtag) {
+  return db.query(`INSERT INTO hashtags (name) VALUES ($1) RETURNING id;`, [
+    hashtag,
+  ]);
+}
+
+export function insertPostHashtag(postId, tagId) {
+  return db.query(
+    `INSERT INTO "postHashtag" ("postId", "hashtagId") VALUES ($1, $2);`,
+    [postId, tagId]
+  );
+}

@@ -1,6 +1,12 @@
 import getMetaData from "metadata-scraper";
 import { db } from "../database/database.connection.js";
-import { getPostsQuery, insertPost } from "../repositories/posts.repository.js";
+import {
+  getHashtag,
+  getPostsQuery,
+  insertHashtag,
+  insertPost,
+  insertPostHashtag,
+} from "../repositories/posts.repository.js";
 
 export async function newPost(req, res) {
   const { url, description } = req.body;
@@ -12,20 +18,12 @@ export async function newPost(req, res) {
     const postId = post.rows[0].id;
     if (hashtags) {
       for (const hashtag of hashtags) {
-        let tag = await db.query(`SELECT * FROM hashtags WHERE name=$1;`, [
-          hashtag,
-        ]);
+        let tag = await getHashtag(hashtag);
         if (tag.rowCount === 0) {
-          tag = await db.query(
-            `INSERT INTO hashtags (name) VALUES ($1) RETURNING id;`,
-            [hashtag]
-          );
+          tag = await insertHashtag(hashtag);
         }
         const tagId = tag.rows[0].id;
-        await db.query(
-          `INSERT INTO "postHashtag" ("postId", "hashtagId") VALUES ($1, $2);`,
-          [postId, tagId]
-        );
+        await insertPostHashtag(postId, tagId);
       }
     }
     res.sendStatus(201);
