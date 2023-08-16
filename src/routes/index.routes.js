@@ -5,6 +5,7 @@ import searchRoute from "./search.routes.js";
 
 
 const router = Router();
+
 router.use(userRoute);
 
 router.use(searchRoute);
