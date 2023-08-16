@@ -29,5 +29,11 @@ export function selectCountLikes(postId) {
 }
 
 export function selectUsersFromLiked(postId) {
-  return db.query(`SELECT "userId" FROM likes WHERE "postId" = $1`, [postId]);
+  return db.query(
+    `SELECT likes."userId", users."username" 
+	  FROM likes 
+	  JOIN users ON users.id = likes."userId" 
+	  WHERE "postId" = $1`,
+    [postId]
+  );
 }
