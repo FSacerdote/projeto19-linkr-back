@@ -8,16 +8,16 @@ import {
 
 export async function likePost(req, res) {
   const { postId } = req.params;
-  const { user } = res.locals;
+  const { userId } = res.locals;
   try {
-    const existingLike = await selectLikes(user.id, postId);
+    const existingLike = await selectLikes(userId, postId);
 
     if (existingLike.rowCount > 0) {
       return res
         .status(409)
         .send({ message: "Post already liked by this user" });
     }
-    await insertIntoLike(user.id, postId);
+    await insertIntoLike(userId, postId);
     res.status(201).send("Post liked successfully");
   } catch (err) {
     res.status(500).send("An error occurred while liking the post");
@@ -26,14 +26,14 @@ export async function likePost(req, res) {
 
 export async function dislikePost(req, res) {
   const { postId } = req.params;
-  const { user } = res.locals;
+  const { userId } = res.locals;
   try {
-    const existingLike = await selectLikes(user.id, postId);
+    const existingLike = await selectLikes(userId, postId);
 
     if (!existingLike.rowCount === 0) {
       return res.status(409).send({ message: "Post not liked by this user" });
     }
-    await deleteLike(user.id, postId);
+    await deleteLike(userId, postId);
     res.status(201).send("Post disliked successfully");
   } catch (err) {
     console.error(err);
@@ -48,7 +48,7 @@ export async function getLikes(req, res) {
     const likedUsersQuery = await selectUsersFromLiked(postId);
 
     const likeCount = likesQuery.rows[0].likeCount;
-    const likedUsers = likedUsersQuery.rows.map((row) => row.userId);
+    const likedUsers = likedUsersQuery.rows;
 
     const likesFromPost = {
       likeCount,
