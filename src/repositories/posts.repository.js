@@ -2,7 +2,7 @@ import { db } from "../database/database.connection.js";
 
 export function insertPost(userId, url, description) {
   return db.query(
-    `INSERT INTO posts ("userId", url, description) VALUES ($1, $2, $3);`,
+    `INSERT INTO posts ("userId", url, description) VALUES ($1, $2, $3) RETURNING id;`,
     [userId, url, description]
   );
 }
