@@ -6,13 +6,13 @@ export async function getUsersList(req, res) {
   try {
     const usersFound = await getUsersByUsername(username);
 
-
     console.log(usersFound.rows[0]);
 
-    if(!usersFound.rows[0])return res.sendStatus(404)
+    if (!usersFound.rows[0]) return res.sendStatus(404);
 
     return res.send(usersFound.rows).status(200);
   } catch (error) {
+    console.log(error);
     return res.sendStatus(500);
   }
 }

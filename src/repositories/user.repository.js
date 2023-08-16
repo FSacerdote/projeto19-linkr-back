@@ -5,7 +5,7 @@ export function getUserByEmailDb(email) {
 }
 
 export function getUsersByUsername(username) {
-  return db.query(`SELECT * FROM users WHERE username LIKE $1;`, [username + '%']);
+  return db.query(`SELECT users.id, users.username, users."pictureUrl" FROM users WHERE username LIKE $1;`, [username + '%']);
 }
 
 export function createUserDb(username, email, hash, pictureUrl) {
