@@ -13,8 +13,9 @@ export async function newPost(req, res) {
 
 export async function getPosts(req, res) {
   try {
-    const posts = await getPostsQuery();
-    res.send(posts.rows);
+    const resposta = await getPostsQuery();
+    const posts = resposta.rows;
+    res.send(posts);
   } catch (error) {
     res.status(500).send("An error occurred while getting the posts");
   }
