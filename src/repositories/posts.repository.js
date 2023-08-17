@@ -56,3 +56,10 @@ export function getPostById(postId) {
     [postId]
   );
 }
+
+export function deletePostById(userId, postId) {
+  return db.query(`DELETE FROM posts WHERE "userId" = $1 AND id = $2`, [
+    userId,
+    postId,
+  ]);
+}
