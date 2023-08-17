@@ -12,7 +12,7 @@ export function getPostsQuery() {
     `SELECT p.id, p."userId", p.url, p.description, u.username, u."pictureUrl" 
     FROM posts p 
     JOIN users u on p."userId" = u.id 
-    ORDER BY p.id LIMIT 20;`
+    ORDER BY p.id DESC LIMIT 20;`
   );
 }
 
