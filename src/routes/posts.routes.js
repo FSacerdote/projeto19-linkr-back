@@ -18,5 +18,6 @@ postsRouter.put(
   validateSchema(postSchema),
   editPosts
 );
+postsRouter.delete("/posts/delete/:postId", validateAuth, deletePost);
 
 export default postsRouter;

@@ -11,5 +11,6 @@ const likesRouter = Router();
 likesRouter.post("/like/:postId", validateAuth, likePost);
 likesRouter.delete("/like/:postId", validateAuth, dislikePost);
 likesRouter.get("/post/:postId/likes", validateAuth, getLikes);
+postsRouter.delete("/posts/delete/:postId", validateAuth, deletePost);
 
 export default likesRouter;
