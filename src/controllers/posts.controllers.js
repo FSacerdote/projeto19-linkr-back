@@ -61,8 +61,10 @@ export async function editPosts(req, res) {
 
   try {
     const existingPost = await getPostById(postId);
+
     if (existingPost.rowCount === 0) {
       return res.status(404).send("Post not found");
+
     }
 
     if (existingPost.rows[0].userId !== userId) {
@@ -83,7 +85,6 @@ export async function editPosts(req, res) {
         await insertPostHashtag(postId, tagId);
       }
     }
-
     res.status(201).send("Post edited successfully");
   } catch (err) {
     res.status(500).send(err);
@@ -109,5 +110,6 @@ export async function deletePost(req, res) {
     const deletedPost = await deletePostById(userId, postId);
   } catch (err) {
     res.status(500).send("An error occurred while deleting the posts");
+
   }
 }
