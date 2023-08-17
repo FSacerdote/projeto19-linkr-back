@@ -3,6 +3,7 @@ import {
   getUserById,
   getUsersByUsername,
 } from "../repositories/search.repository.js";
+import getMetaData from "metadata-scraper";
 
 export async function getUsersList(req, res) {
   const { username } = req.params;
@@ -22,8 +23,14 @@ export async function getUserPosts(req, res) {
 
   try {
     const postsFound = await getPostsByUserId(id);
-    
-    return res.send(postsFound.rows).status(200);
+    const postArr = [];
+
+    for (const post of postsFound.rows) {
+      const data = await getMetaData(post.url);
+      postArr.push({ ...post, data });
+    }
+
+    return res.send(postArr).status(200);
   } catch (error) {
     console.log(error);
     return res.sendStatus(500);
