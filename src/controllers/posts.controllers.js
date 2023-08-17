@@ -1,5 +1,4 @@
 import getMetaData from "metadata-scraper";
-import { db } from "../database/database.connection.js";
 import {
   editPost,
   getHashtag,
