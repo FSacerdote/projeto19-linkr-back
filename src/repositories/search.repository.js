@@ -2,7 +2,7 @@ import { db } from "../database/database.connection.js";
 
 export function getUsersByUsername(username) {
   return db.query(
-    `SELECT users.id, users.username, users."pictureUrl" FROM users WHERE username LIKE $1;`,
+    `SELECT users.id, users.username, users."pictureUrl" FROM users WHERE LOWER(username) LIKE LOWER($1);`,
     [username + "%"]
   );
 }
