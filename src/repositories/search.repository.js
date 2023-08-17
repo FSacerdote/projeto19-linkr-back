@@ -8,7 +8,12 @@ export function getUsersByUsername(username) {
 }
 
 export function getPostsByUserId(id) {
-  return db.query(`SELECT * FROM posts WHERE "userId" = $1;`, [id]);
+  return db.query(
+    `SELECT p.id, p."userId", p.url, p.description, u.username, u."pictureUrl" 
+    FROM posts p JOIN users u ON u.id = p."userId" WHERE u.id = $1
+    ORDER BY p.id DESC`,
+    [id]
+  );
 }
 
 export function getUserById(id) {
