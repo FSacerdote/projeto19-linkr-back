@@ -3,6 +3,7 @@ import { validateAuth } from "../middlewares/validateAuth.js";
 import { validateSchema } from "../middlewares/validate.schema.js";
 import { postSchema } from "../schemas/posts.schemas.js";
 import {
+  deletePost,
   editPosts,
   getPosts,
   newPost,

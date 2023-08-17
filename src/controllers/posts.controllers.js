@@ -1,5 +1,6 @@
 import getMetaData from "metadata-scraper";
 import {
+  deletePostById,
   editPost,
   getHashtag,
   getPostById,
@@ -60,14 +61,14 @@ export async function editPosts(req, res) {
 
   try {
     const existingPost = await getPostById(postId);
-    if (!existingPost) {
-      return res.status(404).send("Post não encontrado");
+    if (existingPost.rowCount === 0) {
+      return res.status(404).send("Post not found");
     }
 
     if (existingPost.rows[0].userId !== userId) {
       return res
         .status(403)
-        .send("Você não tem permissão para editar este post");
+        .send("You don't have permission to edit this post");
     }
 
     const post = await editPost(description, postId, userId);
@@ -83,8 +84,30 @@ export async function editPosts(req, res) {
       }
     }
 
-    res.sendStatus(201);
-  } catch (error) {
-    res.status(500).send(error);
+    res.status(201).send("Post edited successfully");
+  } catch (err) {
+    res.status(500).send(err);
+  }
+}
+
+export async function deletePost(req, res) {
+  const { userId } = res.locals;
+  const { postId } = req.params;
+  try {
+    const existingPost = await getPostById(postId);
+    console.log(existingPost.rowCount === 0);
+    if (existingPost.rowCount === 0) {
+      return res.status(404).send("Post not found");
+    }
+
+    if (existingPost.rows[0].userId !== userId) {
+      return res
+        .status(403)
+        .send("You don't have permission to delete this post");
+    }
+
+    const deletedPost = await deletePostById(userId, postId);
+  } catch (err) {
+    res.status(500).send("An error occurred while deleting the posts");
   }
 }
