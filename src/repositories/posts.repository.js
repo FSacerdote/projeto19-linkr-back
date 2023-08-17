@@ -32,3 +32,27 @@ export function insertPostHashtag(postId, tagId) {
     [postId, tagId]
   );
 }
+
+export function editPost(description, postId, userId) {
+  return db.query(
+    `UPDATE posts SET description = $1 WHERE id = $2 AND "userId"=$3`,
+    [description, postId, userId]
+  );
+}
+
+export function editPostHashtag(postId, tagId) {
+  return db.query(
+    `UPDATE "postHashtag" SET "postId", "hashtagId") VALUES ($1, $2);`,
+    [postId, tagId]
+  );
+}
+
+export function getPostById(postId) {
+  return db.query(
+    `SELECT p.id, p."userId", p.url, p.description, u.username, u."pictureUrl" 
+  FROM posts p 
+  JOIN users u on p."userId" = u.id 
+  WHERE p.id = $1;`,
+    [postId]
+  );
+}
