@@ -4,6 +4,7 @@ import {
   editPost,
   getHashtag,
   getPostById,
+  getPostHashtag,
   getPostsQuery,
   insertHashtag,
   insertPost,
@@ -64,7 +65,6 @@ export async function editPosts(req, res) {
 
     if (existingPost.rowCount === 0) {
       return res.status(404).send("Post not found");
-
     }
 
     if (existingPost.rows[0].userId !== userId) {
@@ -82,7 +82,10 @@ export async function editPosts(req, res) {
           tag = await insertHashtag(hashtag);
         }
         const tagId = tag.rows[0].id;
-        await insertPostHashtag(postId, tagId);
+        let postHashtag = await getPostHashtag(tagId, postId);
+        if (postHashtag.rowCount === 0) {
+          await insertPostHashtag(postId, tagId);
+        }
       }
     }
     res.status(201).send("Post edited successfully");
@@ -110,6 +113,5 @@ export async function deletePost(req, res) {
     const deletedPost = await deletePostById(userId, postId);
   } catch (err) {
     res.status(500).send("An error occurred while deleting the posts");
-
   }
 }

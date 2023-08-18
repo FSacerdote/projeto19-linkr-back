@@ -40,12 +40,6 @@ export function editPost(description, postId, userId) {
   );
 }
 
-export function editPostHashtag(postId, tagId) {
-  return db.query(
-    `UPDATE "postHashtag" SET "postId", "hashtagId") VALUES ($1, $2);`,
-    [postId, tagId]
-  );
-}
 
 export function getPostById(postId) {
   return db.query(
@@ -62,4 +56,12 @@ export function deletePostById(userId, postId) {
     userId,
     postId,
   ]);
+}
+
+export function getPostHashtag(tagId, postId) {
+  return db.query(
+    `
+  SELECT * FROM "postHashtag" WHERE "postId" = $1 AND "hashtagId" = $2`,
+    [tagId, postId]
+  );
 }
