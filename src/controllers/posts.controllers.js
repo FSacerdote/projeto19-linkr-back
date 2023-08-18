@@ -1,7 +1,9 @@
 import getMetaData from "metadata-scraper";
-import { db } from "../database/database.connection.js";
 import {
+  deletePostById,
+  editPost,
   getHashtag,
+  getPostById,
   getPostsQuery,
   insertHashtag,
   insertPost,
@@ -44,5 +46,70 @@ export async function getPosts(req, res) {
     res.send(final);
   } catch (error) {
     res.status(500).send("An error occurred while getting the posts");
+  }
+}
+
+export async function editPosts(req, res) {
+  const { description } = req.body;
+  const { postId } = req.params;
+  const { userId } = res.locals;
+  console.log(description);
+  console.log(postId);
+  console.log(userId);
+  const hashtagRegex = /#\w+/g;
+  const hashtags = description.match(hashtagRegex)?.map((tag) => tag.slice(1));
+
+  try {
+    const existingPost = await getPostById(postId);
+
+    if (existingPost.rowCount === 0) {
+      return res.status(404).send("Post not found");
+
+    }
+
+    if (existingPost.rows[0].userId !== userId) {
+      return res
+        .status(403)
+        .send("You don't have permission to edit this post");
+    }
+
+    const post = await editPost(description, postId, userId);
+
+    if (hashtags) {
+      for (const hashtag of hashtags) {
+        let tag = await getHashtag(hashtag);
+        if (tag.rowCount === 0) {
+          tag = await insertHashtag(hashtag);
+        }
+        const tagId = tag.rows[0].id;
+        await insertPostHashtag(postId, tagId);
+      }
+    }
+    res.status(201).send("Post edited successfully");
+  } catch (err) {
+    res.status(500).send(err);
+  }
+}
+
+export async function deletePost(req, res) {
+  const { userId } = res.locals;
+  const { postId } = req.params;
+  try {
+    const existingPost = await getPostById(postId);
+    console.log(existingPost.rowCount === 0);
+    if (existingPost.rowCount === 0) {
+      return res.status(404).send("Post not found");
+    }
+
+    if (existingPost.rows[0].userId !== userId) {
+      return res
+        .status(403)
+        .send("You don't have permission to delete this post");
+    }
+
+    const deletedPost = await deletePostById(userId, postId);
+  } catch (err) {
+    res.status(500).send("An error occurred while deleting the posts");
+
   }
 }

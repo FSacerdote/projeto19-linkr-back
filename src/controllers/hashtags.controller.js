@@ -1,3 +1,4 @@
+import getMetaData from "metadata-scraper";
 import {
   getHashtagsByFrequency,
   getPostsByHashtag,
@@ -19,7 +20,14 @@ export async function getHashtagPosts(req, res) {
 
   try {
     const posts = await getPostsByHashtag(hashtag);
-    res.send(posts);
+    const postsWithMeta = [];
+
+    for (const post of posts) {
+      const data = await getMetaData(post.url);
+      postsWithMeta.push({ ...post, data });
+    }
+
+    res.send(postsWithMeta);
   } catch (error) {
     return res.status(500).send(error.message);
   }
