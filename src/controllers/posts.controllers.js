@@ -41,12 +41,16 @@ export async function getPosts(req, res) {
     const posts = resposta.rows;
     const final = [];
     for (const post of posts) {
-      const data = await getMetaData(post.url);
-      final.push({ ...post, data });
+      try {
+        const data = await getMetaData(post.url);
+        final.push({ ...post, data });
+      } catch (error) {
+        console.log("erro ao coletar a metadata do link");
+      }
     }
     res.send(final);
   } catch (error) {
-    res.status(500).send("An error occurred while getting the posts");
+    res.status(500).send(error);
   }
 }
 
