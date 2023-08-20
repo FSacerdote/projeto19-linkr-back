@@ -26,8 +26,12 @@ export async function getUserPosts(req, res) {
     const postArr = [];
 
     for (const post of postsFound.rows) {
-      const data = await getMetaData(post.url);
-      postArr.push({ ...post, data });
+      try {
+        const data = await getMetaData(post.url);
+        postArr.push({ ...post, data });
+      } catch (error) {
+        console.log("erro ao coletar a metadata do link");
+      }
     }
 
     return res.send(postArr).status(200);
