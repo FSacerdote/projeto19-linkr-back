@@ -351,7 +351,7 @@ ALTER TABLE ONLY public.users
 --
 
 ALTER TABLE ONLY public.likes
-    ADD CONSTRAINT "likes_postId_fkey" FOREIGN KEY ("postId") REFERENCES public.posts(id);
+    ADD CONSTRAINT "likes_postId_fkey" FOREIGN KEY ("postId") REFERENCES public.posts(id) ON DELETE CASCADE;
 
 
 --
@@ -367,7 +367,7 @@ ALTER TABLE ONLY public.likes
 --
 
 ALTER TABLE ONLY public."postHashtag"
-    ADD CONSTRAINT "postHashtag_hashtagId_fkey" FOREIGN KEY ("hashtagId") REFERENCES public.hashtags(id);
+    ADD CONSTRAINT "postHashtag_hashtagId_fkey" FOREIGN KEY ("hashtagId") REFERENCES public.hashtags(id) ;
 
 
 --
@@ -375,7 +375,7 @@ ALTER TABLE ONLY public."postHashtag"
 --
 
 ALTER TABLE ONLY public."postHashtag"
-    ADD CONSTRAINT "postHashtag_postId_fkey" FOREIGN KEY ("postId") REFERENCES public.posts(id);
+    ADD CONSTRAINT "postHashtag_postId_fkey" FOREIGN KEY ("postId") REFERENCES public.posts(id) ON DELETE CASCADE;
 
 
 --
