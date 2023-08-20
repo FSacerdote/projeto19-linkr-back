@@ -39,7 +39,7 @@ export async function signin(req, res) {
         {
           id: foundUser.rows[0].id,
         },
-        process.env.JWT_SECRET,
+        process.env.SECRET_KEY,
         {
           expiresIn: tokenExpirationSeconds,
         }
