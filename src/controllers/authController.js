@@ -46,7 +46,7 @@ export async function signin(req, res) {
       );
       return res
         .status(200)
-        .send({ pictureUrl: foundUser.rows[0].pictureUrl, token });
+        .send({ pictureUrl: foundUser.rows[0].pictureUrl, token, userId: foundUser.rows[0].id });
     }
     return res.sendStatus(401);
   } catch (error) {
