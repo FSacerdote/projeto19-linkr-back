@@ -13,8 +13,8 @@ export async function signup(req, res) {
     const user = await getUserByEmailDb(email);
     if (user.rowCount > 0) return res.status(409).send("E-mail já cadastrado.");
 
-    const username = await getUserByUsernameDb(username);
-    if (user.rowCount > 0) return res.status(409).send("Nome de usuário já cadastrado.");
+    const userName = await getUserByUsernameDb(username);
+    if (userName.rowCount > 0) return res.status(409).send("Nome de usuário já cadastrado.");
 
     const hash = bcrypt.hashSync(password, 10);
     await createUserDb(username, email, hash, pictureUrl);
