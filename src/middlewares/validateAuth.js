@@ -9,7 +9,7 @@ export async function validateAuth(req, res, next) {
   }
 
   try {
-    const data = jwt.verify(token, process.env.JWT_SECRET);
+    const data = jwt.verify(token, process.env.SECRET_KEY);
     res.locals.userId = data.id;
 
     next();
