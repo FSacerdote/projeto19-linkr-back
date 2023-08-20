@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import {
   createUserDb,
   getUserByEmailDb,
+  getUserByUsernameDb,
 } from "../repositories/user.repository.js";
 
 export async function signup(req, res) {
@@ -11,6 +12,9 @@ export async function signup(req, res) {
   try {
     const user = await getUserByEmailDb(email);
     if (user.rowCount > 0) return res.status(409).send("E-mail já cadastrado.");
+
+    const username = await getUserByUsernameDb(username);
+    if (user.rowCount > 0) return res.status(409).send("Nome de usuário já cadastrado.");
 
     const hash = bcrypt.hashSync(password, 10);
     await createUserDb(username, email, hash, pictureUrl);
