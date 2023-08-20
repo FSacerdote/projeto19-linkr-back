@@ -4,6 +4,10 @@ export function getUserByEmailDb(email) {
   return db.query(`SELECT * FROM users WHERE email=$1;`, [email]);
 }
 
+export function getUserByUsernameDb(username) {
+  return db.query(`SELECT * FROM users WHERE username=$1;`, [username]);
+}
+
 export function createUserDb(username, email, hash, pictureUrl) {
   return db.query(
     `

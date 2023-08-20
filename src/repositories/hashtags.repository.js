@@ -22,25 +22,33 @@ export async function getHashtagsByFrequency(limit) {
 
 export async function getPostsByHashtag(hashtag) {
   const posts = await db.query(
-    `SELECT
-      p.id,
-      p."userId",
-      u.username,
-      u."pictureUrl",
-      p.url,
-      p.description
-    FROM
-      posts p
-    JOIN
-      users u ON p."userId" = u.id
-    JOIN
-      "postHashtag" ph ON p.id = ph."postId"
-    JOIN
-      hashtags h ON ph."hashtagId" = h.id
-    WHERE
-      h.name = $1
-    ORDER BY
-     p.id DESC;`,
+    `SELECT 
+      p.id, 
+      p."userId", 
+      u.username, 
+      u."pictureUrl", 
+      p.url, 
+      p.description,
+      (SELECT COUNT(*) FROM likes l WHERE l."postId" = p.id) AS "likeCount",
+      array_agg(json_build_object('userId', l."userId", 'username', u2.username)) AS "likedUsers"
+    FROM 
+      posts p 
+    JOIN 
+      users u ON p."userId" = u.id 
+    JOIN 
+      "postHashtag" ph ON p.id = ph."postId" 
+    JOIN 
+      hashtags h ON ph."hashtagId" = h.id 
+    LEFT JOIN 
+      likes l ON p.id = l."postId"
+    LEFT JOIN 
+      users u2 ON l."userId" = u2.id
+    WHERE 
+      h.name = $1 
+    GROUP BY 
+      p.id, u.id
+    ORDER BY 
+      p.id DESC;`,
     [hashtag]
   );
 

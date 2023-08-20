@@ -8,6 +8,6 @@ import { validateAuth } from "../middlewares/validateAuth.js";
 const hashtagsRouter = Router();
 
 hashtagsRouter.get("/hashtags/trending", validateAuth, getTrending);
-hashtagsRouter.get("/hashtags/:hashtag", validateAuth, getHashtagPosts);
+hashtagsRouter.get("/hashtag/:hashtag", validateAuth, getHashtagPosts);
 
 export default hashtagsRouter;
