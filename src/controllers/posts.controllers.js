@@ -115,6 +115,7 @@ export async function deletePost(req, res) {
     }
 
     const deletedPost = await deletePostById(userId, postId);
+    res.send();
   } catch (err) {
     res.status(500).send("An error occurred while deleting the posts");
   }
