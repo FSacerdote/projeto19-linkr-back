@@ -22,9 +22,9 @@ export function getPostsByUserId(id) {
       posts p 
     JOIN 
       users u ON p."userId" = u.id 
-    JOIN 
+    LEFT JOIN 
       "postHashtag" ph ON p.id = ph."postId" 
-    JOIN 
+    LEFT JOIN 
       hashtags h ON ph."hashtagId" = h.id 
     LEFT JOIN 
       likes l ON p.id = l."postId"
