@@ -55,8 +55,8 @@ export async function getPostsByHashtag(hashtag, offset, limit) {
   params.push(hashtag);
 
   if (offset) {
-    query += ` OFFSET $${queryParams.length + 1}`;
-    queryParams.push(offset);
+    query += ` OFFSET $${params.length + 1}`;
+    params.push(offset);
   }
 
   if (limit) {

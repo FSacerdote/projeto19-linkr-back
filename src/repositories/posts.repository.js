@@ -23,15 +23,14 @@ export async function getPostsQuery(offset, limit) {
     LEFT JOIN likes l ON p.id = l."postId"
     LEFT JOIN users u2 ON l."userId" = u2.id
     GROUP BY p.id, u.id
-    ORDER BY p.id
+    ORDER BY p.id DESC
   `;
 
   let params = [];
-  params.push(id);
 
   if (offset) {
-    query += ` OFFSET $${queryParams.length + 1}`;
-    queryParams.push(offset);
+    query += ` OFFSET $${params.length + 1}`;
+    params.push(offset);
   }
 
   if (limit) {

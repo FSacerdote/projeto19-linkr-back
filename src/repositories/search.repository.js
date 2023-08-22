@@ -42,8 +42,8 @@ export async function getPostsByUserId(id, offset, limit) {
   params.push(id);
 
   if (offset) {
-    query += ` OFFSET $${queryParams.length + 1}`;
-    queryParams.push(offset);
+    query += ` OFFSET $${params.length + 1}`;
+    params.push(offset);
   }
 
   if (limit) {
