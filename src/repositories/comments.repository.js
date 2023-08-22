@@ -2,7 +2,7 @@ import { db } from "../database/database.connection.js";
 
 export function getCommentsFromPost(postId) {
   return db.query(
-    `SELECT comments.id, comments."postId", comments."userId", users.username, comments.text FROM "comments"
+    `SELECT comments.id, comments."postId", comments."userId", users.username, users."pictureUrl", comments.text FROM "comments"
 	JOIN users ON users.id = comments."userId"
 	JOIN posts ON posts.id = comments."postId"
 	WHERE comments."postId" = $1;`,

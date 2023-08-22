@@ -14,7 +14,7 @@ export async function getComments(req, res) {
       comments,
     };
 
-    res.status(200).send(resp);
+    res.status(200).send(comments);
   } catch (error) {
     res.status(500).send(error);
   }
