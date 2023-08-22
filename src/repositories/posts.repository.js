@@ -7,9 +7,9 @@ export function insertPost(userId, url, description) {
   );
 }
 
-export function getPostsQuery() {
-  return db.query(
-    `SELECT 
+export async function getPostsQuery(offset, limit) {
+  let query = `
+    SELECT 
       p.id, 
       p."userId", 
       p.url, 
@@ -23,8 +23,24 @@ export function getPostsQuery() {
     LEFT JOIN likes l ON p.id = l."postId"
     LEFT JOIN users u2 ON l."userId" = u2.id
     GROUP BY p.id, u.id
-    ORDER BY p.id DESC LIMIT 20;`
-  );
+    ORDER BY p.id
+  `;
+
+  let params = [];
+  params.push(id);
+
+  if (offset) {
+    query += ` OFFSET $${queryParams.length + 1}`;
+    queryParams.push(offset);
+  }
+
+  if (limit) {
+    query += ` LIMIT $${params.length + 1}`;
+    params.push(limit);
+  }
+
+  const posts = await db.query(query, params);
+  return posts;
 }
 
 export function getHashtag(hashtag) {
