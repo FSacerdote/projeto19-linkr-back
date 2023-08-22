@@ -9,6 +9,7 @@ import {
   insertHashtag,
   insertPost,
   insertPostHashtag,
+  searchFollowers,
 } from "../repositories/posts.repository.js";
 
 export async function newPost(req, res) {
@@ -36,7 +37,10 @@ export async function newPost(req, res) {
 }
 
 export async function getPosts(req, res) {
+  const { userId } = res.locals;
   try {
+    const isFollowing = await searchFollowers(userId);
+    if (isFollowing.rowCount === 0) return res.send([-1]);
     const resposta = await getPostsQuery();
     const posts = resposta.rows;
     const final = [];

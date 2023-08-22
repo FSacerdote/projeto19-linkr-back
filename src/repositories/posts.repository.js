@@ -77,3 +77,7 @@ export function getPostHashtag(tagId, postId) {
     [tagId, postId]
   );
 }
+
+export function searchFollowers(userId) {
+  return db.query(`SELECT * FROM followers WHERE "userId"=$1;`, [userId]);
+}
