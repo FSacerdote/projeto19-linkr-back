@@ -1,8 +1,7 @@
 import {
   getCommentsFromPost,
-  selectCountCommentsFromPost,
+  insertCommentIntoPost,
 } from "../repositories/comments.repository.js";
-import { selectCountLikes } from "../repositories/likes.repository.js";
 
 export async function getComments(req, res) {
   const { postId } = req.params;
@@ -15,9 +14,33 @@ export async function getComments(req, res) {
       comments,
     };
 
-    console.log(resp);
-
     res.status(200).send(resp);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+}
+
+export async function newComment(req, res) {
+  const { postId } = req.params;
+  const { userId } = res.locals;
+  const { text } = req.body;
+  try {
+    const query = await insertCommentIntoPost(postId, userId, text);
+
+    res.status(201);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+}
+
+export async function deleteComment(req, res) {
+  const { postId } = req.params;
+  const { userId } = res.locals;
+  const { text } = req.body;
+  try {
+    const query = await insertCommentIntoPost(postId, userId, text);
+
+    res.status(201);
   } catch (error) {
     res.status(500).send(error);
   }
