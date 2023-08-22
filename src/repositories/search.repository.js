@@ -1,9 +1,11 @@
 import { db } from "../database/database.connection.js";
 
-export function getUsersByUsername(username) {
+export function getUsersByUsername(username, userId) {
   return db.query(
-    `SELECT users.id, users.username, users."pictureUrl" FROM users WHERE username LIKE $1;`,
-    [username + "%"]
+    `SELECT users.id, users.username, users."pictureUrl", followers."userId" AS "isFollowed" FROM users
+    LEFT JOIN followers ON users.id=followers."followedId" AND followers."userId"=$2
+    WHERE username LIKE $1 ORDER BY followers."userId";`,
+    [username + "%", userId]
   );
 }
 

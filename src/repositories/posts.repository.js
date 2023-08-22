@@ -19,6 +19,7 @@ export async function getPostsQuery(offset, limit) {
       (SELECT COUNT(*) FROM likes l WHERE l."postId" = p.id) AS "likeCount",
       array_agg(json_build_object('userId', l."userId", 'username', u2.username)) AS "likedUsers"
     FROM posts p
+    JOIN followers f ON p."userId" = f."followedId"
     JOIN users u ON p."userId" = u.id
     LEFT JOIN likes l ON p.id = l."postId"
     LEFT JOIN users u2 ON l."userId" = u2.id
@@ -66,7 +67,6 @@ export function editPost(description, postId, userId) {
   );
 }
 
-
 export function getPostById(postId) {
   return db.query(
     `SELECT p.id, p."userId", p.url, p.description, u.username, u."pictureUrl" 
@@ -90,4 +90,8 @@ export function getPostHashtag(tagId, postId) {
   SELECT * FROM "postHashtag" WHERE "postId" = $1 AND "hashtagId" = $2`,
     [tagId, postId]
   );
+}
+
+export function searchFollowers(userId) {
+  return db.query(`SELECT * FROM followers WHERE "userId"=$1;`, [userId]);
 }

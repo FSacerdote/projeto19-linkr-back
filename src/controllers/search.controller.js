@@ -7,9 +7,9 @@ import getMetaData from "metadata-scraper";
 
 export async function getUsersList(req, res) {
   const { username } = req.params;
-
+  const { userId } = res.locals;
   try {
-    const usersFound = await getUsersByUsername(username);
+    const usersFound = await getUsersByUsername(username, userId);
 
     return res.send(usersFound.rows).status(200);
   } catch (error) {

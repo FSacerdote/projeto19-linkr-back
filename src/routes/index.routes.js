@@ -4,6 +4,7 @@ import userRoute from "./user.routes.js";
 import postsRouter from "./posts.routes.js";
 import hashtagsRouter from "./hashtags.routes.js";
 import searchRoute from "./search.routes.js";
+import followsRouter from "./follows.routes.js";
 
 const router = Router();
 
@@ -12,5 +13,6 @@ router.use(userRoute);
 router.use(postsRouter);
 router.use(hashtagsRouter);
 router.use(searchRoute);
+router.use(followsRouter);
 
 export default router;
