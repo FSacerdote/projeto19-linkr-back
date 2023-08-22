@@ -17,3 +17,10 @@ export function deleteFollow(userId, followedId) {
     [userId, followedId]
   );
 }
+
+export function getFollow(userId, followedId) {
+  return db.query(
+    `SELECT * FROM followers WHERE "userId"=$1 AND "followedId"=$2;`,
+    [userId, followedId]
+  );
+}
