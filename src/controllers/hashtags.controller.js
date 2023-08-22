@@ -16,10 +16,10 @@ export async function getTrending(req, res) {
 }
 
 export async function getHashtagPosts(req, res) {
-  const hashtag = req.params.hashtag;
+  const { hashtag, offset, limit } = req.params;
 
   try {
-    const posts = await getPostsByHashtag(hashtag);
+    const posts = await getPostsByHashtag(hashtag, offset, limit);
     const postsWithMeta = [];
 
     for (const post of posts) {

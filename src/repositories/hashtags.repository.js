@@ -20,9 +20,9 @@ export async function getHashtagsByFrequency(limit) {
   return trending.rows;
 }
 
-export async function getPostsByHashtag(hashtag) {
-  const posts = await db.query(
-    `SELECT 
+export async function getPostsByHashtag(hashtag, offset, limit) {
+  let query = `
+    SELECT 
       p.id, 
       p."userId", 
       u.username, 
@@ -48,9 +48,22 @@ export async function getPostsByHashtag(hashtag) {
     GROUP BY 
       p.id, u.id
     ORDER BY 
-      p.id DESC;`,
-    [hashtag]
-  );
+      p.id DESC
+  `;
 
+  let params = [];
+  params.push(hashtag);
+
+  if (offset) {
+    query += ` OFFSET $${queryParams.length + 1}`;
+    queryParams.push(offset);
+  }
+
+  if (limit) {
+    query += ` LIMIT $${params.length + 1}`;
+    params.push(limit);
+  }
+
+  const posts = await db.query(query, params);
   return posts.rows;
 }
