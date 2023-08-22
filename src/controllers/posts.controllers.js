@@ -50,7 +50,7 @@ export async function getPosts(req, res) {
     }
     res.send(final);
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).send(error.message);
   }
 }
 

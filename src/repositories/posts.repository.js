@@ -19,11 +19,13 @@ export function getPostsQuery() {
       (SELECT COUNT(*) FROM likes l WHERE l."postId" = p.id) AS "likeCount",
       array_agg(json_build_object('userId', l."userId", 'username', u2.username)) AS "likedUsers"
     FROM posts p
+    JOIN followers f ON p."userId" = f."followedId"
     JOIN users u ON p."userId" = u.id
     LEFT JOIN likes l ON p.id = l."postId"
     LEFT JOIN users u2 ON l."userId" = u2.id
     GROUP BY p.id, u.id
-    ORDER BY p.id DESC LIMIT 20;`
+    ORDER BY p.id DESC 
+    LIMIT 20;`
   );
 }
 
@@ -50,7 +52,6 @@ export function editPost(description, postId, userId) {
     [description, postId, userId]
   );
 }
-
 
 export function getPostById(postId) {
   return db.query(
