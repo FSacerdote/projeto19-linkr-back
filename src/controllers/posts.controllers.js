@@ -36,8 +36,10 @@ export async function newPost(req, res) {
 }
 
 export async function getPosts(req, res) {
+  const { offset, limit } = req.query;
+
   try {
-    const resposta = await getPostsQuery();
+    const resposta = await getPostsQuery(offset, limit);
     const posts = resposta.rows;
     const final = [];
     for (const post of posts) {
