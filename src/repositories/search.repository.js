@@ -7,9 +7,9 @@ export function getUsersByUsername(username) {
   );
 }
 
-export function getPostsByUserId(id) {
-  return db.query(
-    `SELECT 
+export async function getPostsByUserId(id, offset, limit) {
+  let query = `
+    SELECT 
       p.id, 
       p."userId", 
       u.username, 
@@ -35,9 +35,24 @@ export function getPostsByUserId(id) {
     GROUP BY 
       p.id, u.id
     ORDER BY 
-      p.id DESC;`,
-    [id]
-  );
+      p.id DESC
+  `;
+
+  let params = [];
+  params.push(id);
+
+  if (offset) {
+    query += ` OFFSET $${params.length + 1}`;
+    params.push(offset);
+  }
+
+  if (limit) {
+    query += ` LIMIT $${params.length + 1}`;
+    params.push(limit);
+  }
+
+  const posts = await db.query(query, params);
+  return posts;
 }
 
 export function getUserById(id) {
