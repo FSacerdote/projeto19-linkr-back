@@ -17,10 +17,12 @@ export async function getPostsQuery(offset, limit) {
       u.username, 
       u."pictureUrl",
       (SELECT COUNT(*) FROM likes l WHERE l."postId" = p.id) AS "likeCount",
+      (SELECT COUNT(*) FROM comments c WHERE c."postId" = p.id) AS "commentCount",
       array_agg(json_build_object('userId', l."userId", 'username', u2.username)) AS "likedUsers"
     FROM posts p
     JOIN users u ON p."userId" = u.id
     LEFT JOIN likes l ON p.id = l."postId"
+    LEFT JOIN comments c ON p.id = c."postId"
     LEFT JOIN users u2 ON l."userId" = u2.id
     GROUP BY p.id, u.id
     ORDER BY p.id DESC
@@ -65,7 +67,6 @@ export function editPost(description, postId, userId) {
     [description, postId, userId]
   );
 }
-
 
 export function getPostById(postId) {
   return db.query(
