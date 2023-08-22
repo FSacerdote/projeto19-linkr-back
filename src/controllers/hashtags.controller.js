@@ -16,7 +16,8 @@ export async function getTrending(req, res) {
 }
 
 export async function getHashtagPosts(req, res) {
-  const { hashtag, offset, limit } = req.params;
+  const hashtag = req.params.hashtag;
+  const { offset, limit } = req.query;
 
   try {
     const posts = await getPostsByHashtag(hashtag, offset, limit);
