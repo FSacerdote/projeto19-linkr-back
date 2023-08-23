@@ -9,7 +9,7 @@ export function getUsersByUsername(username, userId) {
   );
 }
 
-export async function getPostsByUserId(id, offset, limit) {
+export async function getPostsByUserId(id, offset, limit, untilId) {
   let query = `
     SELECT 
       p.id, 
@@ -34,14 +34,21 @@ export async function getPostsByUserId(id, offset, limit) {
       users u2 ON l."userId" = u2.id
     WHERE 
       u.id = $1 
+  `;
+
+  let params = [id];
+
+  if (untilId) {
+    query += ` AND p.id > $${params.length + 1}`;
+    params.push(untilId);
+  }
+
+  query += `
     GROUP BY 
       p.id, u.id
     ORDER BY 
       p.id DESC
   `;
-
-  let params = [];
-  params.push(id);
 
   if (offset) {
     query += ` OFFSET $${params.length + 1}`;

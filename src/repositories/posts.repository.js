@@ -7,7 +7,7 @@ export function insertPost(userId, url, description) {
   );
 }
 
-export async function getPostsQuery(offset, limit) {
+export async function getPostsQuery(offset, limit, untilId) {
   let query = `
     SELECT 
       p.id, 
@@ -23,11 +23,19 @@ export async function getPostsQuery(offset, limit) {
     JOIN users u ON p."userId" = u.id
     LEFT JOIN likes l ON p.id = l."postId"
     LEFT JOIN users u2 ON l."userId" = u2.id
+    `;
+
+  let params = [];
+
+  if (untilId) {
+    query += ` WHERE p.id > $${params.length + 1}`;
+    params.push(untilId);
+  }
+
+  query += `
     GROUP BY p.id, u.id
     ORDER BY p.id DESC
   `;
-
-  let params = [];
 
   if (offset) {
     query += ` OFFSET $${params.length + 1}`;
