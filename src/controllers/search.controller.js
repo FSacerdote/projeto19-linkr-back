@@ -20,10 +20,10 @@ export async function getUsersList(req, res) {
 
 export async function getUserPosts(req, res) {
   const { id } = req.params;
-  const { offset, limit } = req.query;
+  const { offset, limit, untilId } = req.query;
 
   try {
-    const postsFound = await getPostsByUserId(id, offset, limit);
+    const postsFound = await getPostsByUserId(id, offset, limit, untilId);
     const postArr = [];
 
     for (const post of postsFound.rows) {
