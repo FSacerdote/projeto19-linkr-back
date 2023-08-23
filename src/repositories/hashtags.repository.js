@@ -50,7 +50,7 @@ export async function getPostsByHashtag(hashtag, offset, limit, untilId) {
   let params = [hashtag];
 
   if (untilId) {
-    query += ` AND p.id < $${params.length + 1}`;
+    query += ` AND p.id > $${params.length + 1}`;
     params.push(untilId);
   }
 
