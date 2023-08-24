@@ -490,7 +490,8 @@ CREATE TABLE public.posts (
     "userId" integer NOT NULL,
     url text NOT NULL,
     description text NOT NULL,
-    "createdAt" timestamp without time zone DEFAULT now() NOT NULL
+    "createdAt" timestamp without time zone DEFAULT now() NOT NULL,
+    "referPost" integer
 );
 
 
@@ -512,38 +513,6 @@ CREATE SEQUENCE public.posts_id_seq
 --
 
 ALTER SEQUENCE public.posts_id_seq OWNED BY public.posts.id;
-
-
---
--- Name: reposts; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.reposts (
-    id integer NOT NULL,
-    "postId" integer NOT NULL,
-    "userId" integer NOT NULL,
-    "createdAt" timestamp without time zone DEFAULT now() NOT NULL
-);
-
-
---
--- Name: reposts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.reposts_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: reposts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.reposts_id_seq OWNED BY public.reposts.id;
 
 
 --
@@ -623,13 +592,6 @@ ALTER TABLE ONLY public.posts ALTER COLUMN id SET DEFAULT nextval('public.posts_
 
 
 --
--- Name: reposts id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.reposts ALTER COLUMN id SET DEFAULT nextval('public.reposts_id_seq'::regclass);
-
-
---
 -- Name: users id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -690,14 +652,6 @@ ALTER TABLE ONLY public."postHashtag"
 
 ALTER TABLE ONLY public.posts
     ADD CONSTRAINT posts_pkey PRIMARY KEY (id);
-
-
---
--- Name: reposts reposts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.reposts
-    ADD CONSTRAINT reposts_pkey PRIMARY KEY (id);
 
 
 --
@@ -789,27 +743,19 @@ ALTER TABLE ONLY public."postHashtag"
 
 
 --
+-- Name: posts posts_referPost_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.posts
+    ADD CONSTRAINT "posts_referPost_fkey" FOREIGN KEY ("referPost") REFERENCES public.posts(id) ON DELETE CASCADE;
+
+
+--
 -- Name: posts posts_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.posts
     ADD CONSTRAINT "posts_userId_fkey" FOREIGN KEY ("userId") REFERENCES public.users(id);
-
-
---
--- Name: reposts reposts_postId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.reposts
-    ADD CONSTRAINT "reposts_postId_fkey" FOREIGN KEY ("postId") REFERENCES public.posts(id) ON DELETE CASCADE;
-
-
---
--- Name: reposts reposts_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.reposts
-    ADD CONSTRAINT "reposts_userId_fkey" FOREIGN KEY ("userId") REFERENCES public.users(id);
 
 
 --
