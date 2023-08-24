@@ -7,7 +7,7 @@ export function insertPost(userId, url, description) {
   );
 }
 
-export async function getPostsQuery(offset, limit) {
+export async function getPostsQuery(offset, limit, untilId, userId) {
   let query = `
     SELECT 
       p.id, 
@@ -20,15 +20,25 @@ export async function getPostsQuery(offset, limit) {
       (SELECT COUNT(*) FROM comments c WHERE c."postId" = p.id) AS "commentCount",
       array_agg(json_build_object('userId', l."userId", 'username', u2.username)) AS "likedUsers"
     FROM posts p
+    JOIN followers f ON p."userId" = f."followedId"
     JOIN users u ON p."userId" = u.id
     LEFT JOIN likes l ON p.id = l."postId"
     LEFT JOIN comments c ON p.id = c."postId"
     LEFT JOIN users u2 ON l."userId" = u2.id
+    WHERE f."userId" = $1
+    `;
+
+  let params = [userId];
+
+  if (untilId) {
+    query += ` AND p.id > $${params.length + 1}`;
+    params.push(untilId);
+  }
+
+  query += `
     GROUP BY p.id, u.id
     ORDER BY p.id DESC
   `;
-
-  let params = [];
 
   if (offset) {
     query += ` OFFSET $${params.length + 1}`;
@@ -91,4 +101,8 @@ export function getPostHashtag(tagId, postId) {
   SELECT * FROM "postHashtag" WHERE "postId" = $1 AND "hashtagId" = $2`,
     [tagId, postId]
   );
+}
+
+export function searchFollowers(userId) {
+  return db.query(`SELECT * FROM followers WHERE "userId"=$1;`, [userId]);
 }
