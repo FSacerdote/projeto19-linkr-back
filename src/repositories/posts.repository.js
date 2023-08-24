@@ -35,7 +35,7 @@ export async function getPostsQuery(offset, limit, untilId, userId) {
     LEFT JOIN posts r ON p."referPost" = r.id
     LEFT JOIN users u3 ON r."userId" = u3.id
     LEFT JOIN comments c ON p.id = c."postId"
-    WHERE f."userId" = $1 OR p."userId" = $1
+    WHERE (f."userId" = $1 OR p."userId" = $1)
   `;
 
   let params = [userId];
