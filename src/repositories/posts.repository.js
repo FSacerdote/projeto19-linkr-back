@@ -103,3 +103,10 @@ export function getPostHashtag(tagId, postId) {
 export function searchFollowers(userId) {
   return db.query(`SELECT * FROM followers WHERE "userId"=$1;`, [userId]);
 }
+
+export function insertRepost(userId, url, description, postId) {
+  return db.query(
+    `INSERT INTO posts ("userId", url, description, "referPost") VALUES ($1, $2, $3, $4)`,
+    [userId, url, description, postId]
+  );
+}
