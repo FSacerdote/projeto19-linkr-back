@@ -43,7 +43,7 @@ export async function getPosts(req, res) {
   try {
     const isFollowing = await searchFollowers(userId);
     if (isFollowing.rowCount === 0) return res.send([-1]);
-    const resposta = await getPostsQuery(offset, limit, untilId);
+    const resposta = await getPostsQuery(offset, limit, untilId, userId);
     const posts = resposta.rows;
     const final = [];
     for (const post of posts) {
