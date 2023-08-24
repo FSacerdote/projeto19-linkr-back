@@ -10,6 +10,7 @@ import {
   insertPost,
   insertPostHashtag,
   searchFollowers,
+  insertRepost,
 } from "../repositories/posts.repository.js";
 
 export async function newPost(req, res) {
@@ -76,6 +77,10 @@ export async function editPosts(req, res) {
       return res.status(404).send("Post not found");
     }
 
+    if (existingPost.rows[0].referPost) {
+      return res.status(404).send("Cannot edit a repost");
+    }
+
     if (existingPost.rows[0].userId !== userId) {
       return res
         .status(403)
@@ -123,5 +128,25 @@ export async function deletePost(req, res) {
     res.send();
   } catch (err) {
     res.status(500).send("An error occurred while deleting the posts");
+  }
+}
+
+export async function repost(req, res) {
+  const { userId } = res.locals;
+  const { postId } = req.params;
+
+  try {
+    const existingPost = await getPostById(postId);
+    if (existingPost.rowCount === 0) {
+      return res.status(404).send("Post not found");
+    }
+    if (existingPost.rows[0].referPost) {
+      return res.status(404).send("Cannot repost a repost");
+    }
+
+    await insertRepost(userId, existingPost.rows[0].url, existingPost.rows[0].description, postId);
+    res.sendStatus(201);
+  } catch (error) {
+    res.status(500).send(error.message);
   }
 }

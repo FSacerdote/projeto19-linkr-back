@@ -45,6 +45,7 @@ export async function getPostsByHashtag(hashtag, offset, limit, untilId) {
       users u2 ON l."userId" = u2.id
     WHERE 
       h.name = $1 
+      AND p."referPost" IS NULL
   `;
 
   let params = [hashtag];
