@@ -11,20 +11,25 @@ export async function getPostsQuery(offset, limit, untilId, userId) {
   let query = `
     SELECT 
       p.id, 
-      p."userId", 
-      p.url, 
-      p.description, 
-      u.username, 
-      u."pictureUrl",
+      CASE WHEN p."referPost" IS NOT NULL THEN r."userId" ELSE p."userId" END AS "userId",
+      CASE WHEN p."referPost" IS NOT NULL THEN r.url ELSE p.url END AS url,
+      CASE WHEN p."referPost" IS NOT NULL THEN r.description ELSE p.description END AS description,
+      CASE WHEN p."referPost" IS NOT NULL THEN u2.username ELSE u.username END AS username,
+      CASE WHEN p."referPost" IS NOT NULL THEN u2."pictureUrl" ELSE u."pictureUrl" END AS "pictureUrl",
+      p."referPost",
       (SELECT COUNT(*) FROM likes l WHERE l."postId" = p.id) AS "likeCount",
-      array_agg(json_build_object('userId', l."userId", 'username', u2.username)) AS "likedUsers"
+      array_agg(json_build_object('userId', l."userId", 'username', u2.username)) AS "likedUsers",
+      CASE WHEN p."referPost" IS NOT NULL THEN u3.username ELSE NULL END AS "reposterUsername",
+      (SELECT COUNT(*) FROM posts rp WHERE rp."referPost" = p."referPost") AS "repostCount"
     FROM posts p
     JOIN followers f ON p."userId" = f."followedId"
     JOIN users u ON p."userId" = u.id
     LEFT JOIN likes l ON p.id = l."postId"
     LEFT JOIN users u2 ON l."userId" = u2.id
+    LEFT JOIN posts r ON p."referPost" = r.id
+    LEFT JOIN users u3 ON r."userId" = u3.id
     WHERE f."userId" = $1
-    `;
+  `;
 
   let params = [userId];
 
@@ -34,7 +39,7 @@ export async function getPostsQuery(offset, limit, untilId, userId) {
   }
 
   query += `
-    GROUP BY p.id, u.id
+    GROUP BY p.id, u.id, r.id, u2.id, u3.id
     ORDER BY p.id DESC
   `;
 
