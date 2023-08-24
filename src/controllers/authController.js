@@ -14,7 +14,8 @@ export async function signup(req, res) {
     if (user.rowCount > 0) return res.status(409).send("E-mail já cadastrado.");
 
     const userName = await getUserByUsernameDb(username);
-    if (userName.rowCount > 0) return res.status(409).send("Nome de usuário já cadastrado.");
+    if (userName.rowCount > 0)
+      return res.status(409).send("Nome de usuário já cadastrado.");
 
     const hash = bcrypt.hashSync(password, 10);
     await createUserDb(username, email, hash, pictureUrl);
@@ -46,7 +47,12 @@ export async function signin(req, res) {
       );
       return res
         .status(200)
-        .send({ pictureUrl: foundUser.rows[0].pictureUrl, token, userId: foundUser.rows[0].id });
+        .send({
+          pictureUrl: foundUser.rows[0].pictureUrl,
+          token,
+          userId: foundUser.rows[0].id,
+          username: foundUser.rows[0].username,
+        });
     }
     return res.sendStatus(401);
   } catch (error) {
