@@ -18,8 +18,12 @@ export async function getPostsByUserId(id, offset, limit, untilId) {
       CASE WHEN p."referPost" IS NOT NULL THEN u3."pictureUrl" ELSE u."pictureUrl" END AS "pictureUrl",
       CASE WHEN p."referPost" IS NOT NULL THEN r.url ELSE p.url END AS url,
       CASE WHEN p."referPost" IS NOT NULL THEN r.description ELSE p.description END AS description,
-      (SELECT COUNT(*) FROM likes l WHERE l."postId" = p.id) AS "likeCount",
-      array_agg(json_build_object('userId', l."userId", 'username', u2.username)) AS "likedUsers"
+      p."referPost",
+      CASE WHEN p."referPost" IS NOT NULL THEN (SELECT COUNT(*) FROM likes l WHERE l."postId" = p."referPost")
+        ELSE (SELECT COUNT(*) FROM likes l WHERE l."postId" = p.id) END AS "likeCount",
+      array_agg(json_build_object('userId', l."userId", 'username', u2.username)) AS "likedUsers",
+      CASE WHEN p."referPost" IS NOT NULL THEN u.username ELSE NULL END AS "reposterUsername",
+      (SELECT COUNT(*) FROM posts rp WHERE rp."referPost" = p."referPost") AS "repostCount"
     FROM 
       posts p 
     JOIN 
@@ -32,8 +36,10 @@ export async function getPostsByUserId(id, offset, limit, untilId) {
       "postHashtag" ph ON p.id = ph."postId" 
     LEFT JOIN 
       hashtags h ON ph."hashtagId" = h.id 
-    LEFT JOIN 
-      likes l ON p.id = l."postId"
+    LEFT JOIN likes l ON (
+      (p."referPost" IS NOT NULL AND p."referPost" = l."postId")
+      OR (p."referPost" IS NULL AND p.id = l."postId")
+      )
     LEFT JOIN 
       users u2 ON l."userId" = u2.id
     WHERE 
