@@ -23,7 +23,7 @@ export async function getPostsQuery(offset, limit, untilId, userId) {
       CASE WHEN p."referPost" IS NOT NULL THEN u.username ELSE NULL END AS "reposterUsername",
       (SELECT COUNT(*) FROM posts rp WHERE rp."referPost" = p."referPost") AS "repostCount",
       CASE WHEN p."referPost" IS NOT NULL THEN (SELECT COUNT(*) FROM comments c WHERE c."postId" = p."referPost")
-        ELSE (SELECT COUNT(*) FROM comments c WHERE c."postId" = p.id) END AS "commentCount",
+        ELSE (SELECT COUNT(*) FROM comments c WHERE c."postId" = p.id) END AS "commentCount"
     FROM posts p
     JOIN followers f ON p."userId" = f."followedId"
     JOIN users u ON p."userId" = u.id
