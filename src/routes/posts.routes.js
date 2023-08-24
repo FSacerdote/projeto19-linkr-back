@@ -7,11 +7,13 @@ import {
   editPosts,
   getPosts,
   newPost,
+  repost,
 } from "../controllers/posts.controllers.js";
 
 const postsRouter = Router();
 
 postsRouter.post("/posts", validateAuth, validateSchema(postSchema), newPost);
+postsRouter.post("/repost/:postId", validateAuth, repost);
 postsRouter.get("/posts", validateAuth, getPosts);
 postsRouter.put(
   "/posts/edit/:postId",
