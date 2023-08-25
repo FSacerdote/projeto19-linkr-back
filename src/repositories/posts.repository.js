@@ -21,7 +21,8 @@ export async function getPostsQuery(offset, limit, untilId, userId) {
         ELSE (SELECT COUNT(*) FROM likes l WHERE l."postId" = p.id) END AS "likeCount",
       array_agg(json_build_object('userId', l."userId", 'username', u2.username)) AS "likedUsers",
       CASE WHEN p."referPost" IS NOT NULL THEN u.username ELSE NULL END AS "reposterUsername",
-      (SELECT COUNT(*) FROM posts rp WHERE rp."referPost" = p."referPost") AS "repostCount",
+      CASE WHEN p."referPost" IS NOT NULL THEN (SELECT COUNT(*) FROM posts rp WHERE rp."referPost" = p."referPost")
+        ELSE (SELECT COUNT(*) FROM posts rp WHERE rp."referPost" = p.id) END AS "repostCount",
       CASE WHEN p."referPost" IS NOT NULL THEN (SELECT COUNT(*) FROM comments c WHERE c."postId" = p."referPost")
         ELSE (SELECT COUNT(*) FROM comments c WHERE c."postId" = p.id) END AS "commentCount"
     FROM posts p
