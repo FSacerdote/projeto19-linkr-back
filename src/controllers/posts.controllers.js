@@ -42,8 +42,9 @@ export async function getPosts(req, res) {
   const { offset, limit, untilId } = req.query;
   try {
     const isFollowing = await searchFollowers(userId);
-    if (isFollowing.rowCount === 0) return res.send([-1]);
     const resposta = await getPostsQuery(offset, limit, untilId, userId);
+    if (isFollowing.rowCount === 0 && resposta.rowCount === 0)
+      return res.send([-1]);
     const posts = resposta.rows;
 
     const final = [];
@@ -145,7 +146,12 @@ export async function repost(req, res) {
       return res.status(404).send("Cannot repost a repost");
     }
 
-    await insertRepost(userId, existingPost.rows[0].url, existingPost.rows[0].description, postId);
+    await insertRepost(
+      userId,
+      existingPost.rows[0].url,
+      existingPost.rows[0].description,
+      postId
+    );
     res.sendStatus(201);
   } catch (error) {
     res.status(500).send(error.message);
