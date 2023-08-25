@@ -31,7 +31,8 @@ export async function getPostsByHashtag(hashtag, offset, limit, untilId) {
       p.description,
       (SELECT COUNT(*) FROM likes l WHERE l."postId" = p.id) AS "likeCount",
       array_agg(json_build_object('userId', l."userId", 'username', u2.username)) AS "likedUsers",
-      (SELECT COUNT(*) FROM comments c WHERE c."postId" = p.id) AS "commentCount"
+      (SELECT COUNT(*) FROM comments c WHERE c."postId" = p.id) AS "commentCount",
+      (SELECT COUNT(*) FROM posts rp WHERE rp."referPost" = p."referPost") AS "repostCount"
     FROM 
       posts p 
     JOIN 
