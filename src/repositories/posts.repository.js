@@ -14,8 +14,8 @@ export async function getPostsQuery(offset, limit, untilId, userId) {
       CASE WHEN p."referPost" IS NOT NULL THEN r."userId" ELSE p."userId" END AS "userId",
       CASE WHEN p."referPost" IS NOT NULL THEN r.url ELSE p.url END AS url,
       CASE WHEN p."referPost" IS NOT NULL THEN r.description ELSE p.description END AS description,
-      CASE WHEN p."referPost" IS NOT NULL THEN u2.username ELSE u.username END AS username,
-      CASE WHEN p."referPost" IS NOT NULL THEN u2."pictureUrl" ELSE u."pictureUrl" END AS "pictureUrl",
+      CASE WHEN p."referPost" IS NOT NULL THEN u3.username ELSE u.username END AS username,
+      CASE WHEN p."referPost" IS NOT NULL THEN u3."pictureUrl" ELSE u."pictureUrl" END AS "pictureUrl",
       p."referPost",
       CASE WHEN p."referPost" IS NOT NULL THEN (SELECT COUNT(*) FROM likes l WHERE l."postId" = p."referPost")
         ELSE (SELECT COUNT(*) FROM likes l WHERE l."postId" = p.id) END AS "likeCount",
