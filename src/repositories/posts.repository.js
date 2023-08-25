@@ -8,9 +8,10 @@ export function insertPost(userId, url, description) {
 }
 
 export async function getPostsQuery(offset, limit, untilId, userId) {
+export async function getPostsQuery(offset, limit, untilId, userId) {
   let query = `
-    SELECT 
-      p.id, 
+    SELECT DISTINCT ON (p.id)
+      p.id,
       CASE WHEN p."referPost" IS NOT NULL THEN r."userId" ELSE p."userId" END AS "userId",
       CASE WHEN p."referPost" IS NOT NULL THEN r.url ELSE p.url END AS url,
       CASE WHEN p."referPost" IS NOT NULL THEN r.description ELSE p.description END AS description,
@@ -18,13 +19,13 @@ export async function getPostsQuery(offset, limit, untilId, userId) {
       CASE WHEN p."referPost" IS NOT NULL THEN u3."pictureUrl" ELSE u."pictureUrl" END AS "pictureUrl",
       p."referPost",
       CASE WHEN p."referPost" IS NOT NULL THEN (SELECT COUNT(*) FROM likes l WHERE l."postId" = p."referPost")
-        ELSE (SELECT COUNT(*) FROM likes l WHERE l."postId" = p.id) END AS "likeCount",
-      array_agg(json_build_object('userId', l."userId", 'username', u2.username)) AS "likedUsers",
+          ELSE (SELECT COUNT(*) FROM likes l WHERE l."postId" = p.id) END AS "likeCount",
+      (SELECT array_agg(json_build_object('userId', l."userId", 'username', u2.username)) FROM likes l INNER JOIN users u2 ON l."userId" = u2.id WHERE l."postId" = p.id) AS "likedUsers",
       CASE WHEN p."referPost" IS NOT NULL THEN u.username ELSE NULL END AS "reposterUsername",
       CASE WHEN p."referPost" IS NOT NULL THEN (SELECT COUNT(*) FROM posts rp WHERE rp."referPost" = p."referPost")
-        ELSE (SELECT COUNT(*) FROM posts rp WHERE rp."referPost" = p.id) END AS "repostCount",
+          ELSE (SELECT COUNT(*) FROM posts rp WHERE rp."referPost" = p.id) END AS "repostCount",
       CASE WHEN p."referPost" IS NOT NULL THEN (SELECT COUNT(*) FROM comments c WHERE c."postId" = p."referPost")
-        ELSE (SELECT COUNT(*) FROM comments c WHERE c."postId" = p.id) END AS "commentCount"
+          ELSE (SELECT COUNT(*) FROM comments c WHERE c."postId" = p.id) END AS "commentCount"
     FROM posts p
     LEFT JOIN followers f ON p."userId" = f."followedId"
     JOIN users u ON p."userId" = u.id
