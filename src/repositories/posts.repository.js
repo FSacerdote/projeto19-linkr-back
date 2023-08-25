@@ -8,7 +8,6 @@ export function insertPost(userId, url, description) {
 }
 
 export async function getPostsQuery(offset, limit, untilId, userId) {
-export async function getPostsQuery(offset, limit, untilId, userId) {
   let query = `
     SELECT DISTINCT ON (p.id)
       p.id,
